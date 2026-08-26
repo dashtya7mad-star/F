@@ -1,2 +1,2 @@
-const BOT_TOKEN = 'توكن_بوتك_هنا';
-const CHAT_ID = 'ايدي_الشات_هنا';
+const BOT_TOKEN = '8422907042:AAE4hkxpTZtfJh5wDlJEI9NeLLjR3jt7XNQ';
+const CHAT_ID = '5015426926';
